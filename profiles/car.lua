@@ -16,8 +16,6 @@ function setup()
     -- For shortest distance without penalties for accessibility
     -- weight_name                     = 'distance',
 
-    process_call_tagless_node      = false,
-
     default_mode      = mode.driving,
     default_speed     = 10,
     oneway_handling   = true,
@@ -250,6 +248,15 @@ function setup()
       ["nl:rural"] = 80,
       ["nl:trunk"] = 100,
       ["none"] = 140
+    },
+
+    node_tags_requiring_processing = {
+      'barrier',
+      'highway',
+      'motorcar',
+      'motor_vehicle',
+      'vehicle',
+      'access'
     }
   }
 end

@@ -490,6 +490,17 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
         context.has_source_function = context.source_function.valid();
 
 
+        // fetch list of tags requiring node processing
+        sol::table node_tags_table = context.profile_table["node_tags_requiring_processing"];
+        if (node_tags_table.valid())
+        {
+            for (auto &&pair : node_tags_table)
+            {
+                context.node_tags_requiring_processing.push_back(pair.second.as<std::string>());
+            };
+        }
+
+
         // set constants
         context.state.new_enum("constants",
                                "precision",
@@ -612,9 +623,7 @@ void Sol2ScriptingEnvironment::ProcessElements(
         {
         case osmium::item_type::node:
             result_node.clear();
-            if (local_context.has_node_function &&
-                (!static_cast<const osmium::Node &>(*entity).tags().empty() ||
-                 local_context.properties.call_tagless_node_function))
+            if (local_context.has_node_function )
             {
                 local_context.ProcessNode(static_cast<const osmium::Node &>(*entity), result_node);
             }
@@ -798,8 +807,27 @@ void LuaScriptingContext::ProcessNode(const osmium::Node &node, ExtractionNode &
     switch (api_version)
     {
     case 2:
-        node_function(profile_table, node, result);
+    {
+        bool  process = false;
+
+        if (node_tags_requiring_processing.empty() )
+            process = true;
+        else
+        {
+            for (auto&& tag : node_tags_requiring_processing ) {
+                auto v = node.get_value_by_key(tag.c_str());
+                if( v && *v )
+                {
+                    process = true;
+                    break;
+                }
+            }
+        }
+
+        if (process)
+            node_function(profile_table, node, result);
         break;
+    }
     case 1:
     case 0:
         node_function(node, result);

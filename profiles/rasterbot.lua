@@ -7,7 +7,6 @@ function setup()
 
   return {
     force_split_edges = true,
-    process_call_tagless_node = false,
     raster_source = sources:load(
       raster_path,
       0,    -- lon_min

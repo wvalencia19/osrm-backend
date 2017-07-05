@@ -12,7 +12,6 @@ function setup()
     continue_straight_at_waypoint = false,
   --weight_name                   = 'cyclability',
     weight_name                   = 'duration',
-    process_call_tagless_node    = false,
 
     default_mode              = mode.cycling,
     default_speed             = default_speed,
@@ -184,6 +183,15 @@ function setup()
     avoid = Set {
       'impassable',
       'construction'
+    },
+
+    node_tags_requiring_processing = {
+      'barrier',
+      'highway',
+      'crossing',
+      'bicycle',
+      'vehicle',
+      'access'
     }
   }
 end
@@ -489,6 +497,7 @@ function handle_bicycle_tags(profile,way,result,data)
       end
   end
 end
+
 function process_way (profile, way, result)
   -- the initial filtering of ways based on presence of tags
   -- affects processing times significantly, because all ways

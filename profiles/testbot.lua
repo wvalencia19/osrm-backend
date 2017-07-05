@@ -13,7 +13,6 @@ function setup()
     use_turn_restrictions         = true,
     max_speed_for_map_matching    = 30/3.6, --km -> m/s
     weight_name                   = 'duration',
-    process_call_tagless_node     = false,
 
     -- used internally
     uturn_penalty                 = 20,
