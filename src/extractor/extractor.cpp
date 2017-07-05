@@ -204,9 +204,6 @@ Extractor::ParseOSMData(ScriptingEnvironment &scripting_environment,
     auto extractor_callbacks = std::make_unique<ExtractorCallbacks>(
         extraction_containers, scripting_environment.GetProfileProperties());
 
-    // setup raster sources
-    scripting_environment.SetupSources();
-
     std::string generator = header.get("generator");
     if (generator.empty())
     {
