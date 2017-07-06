@@ -131,7 +131,7 @@ function setup()
     node_tags_requiring_processing = {
       'barrier',
       'highway',
-      'crossing'
+      'crossing',
       'foot',
       'access'
     }
