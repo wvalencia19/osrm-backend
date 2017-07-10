@@ -461,10 +461,9 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
         // clear global not used in v2
         context.state["properties"] = sol::nullopt;
 
-
         // check function table
         if (function_table == sol::nullopt)
-            throw util::exception("Profile must return a function table."); 
+            throw util::exception("Profile must return a function table.");
 
         // call initialize function
         sol::function setup_function = function_table.value()["setup"];
@@ -489,7 +488,6 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
         context.has_segment_function = context.segment_function.valid();
         context.has_source_function = context.source_function.valid();
 
-
         // fetch list of tags requiring node processing
         sol::table node_tags_table = context.profile_table["node_tags_requiring_processing"];
         if (node_tags_table.valid())
@@ -499,7 +497,6 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
                 context.node_tags_requiring_processing.push_back(pair.second.as<std::string>());
             };
         }
-
 
         // set constants
         context.state.new_enum("constants",
@@ -552,7 +549,7 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
         break;
     }
     case 1:
-         // cache references to functions for faster execution
+        // cache references to functions for faster execution
         context.turn_function = context.state["turn_function"];
         context.node_function = context.state["node_function"];
         context.way_function = context.state["way_function"];
@@ -570,7 +567,7 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
         BOOST_ASSERT(context.properties.GetTrafficSignalPenalty() == 0);
         break;
     case 0:
-         // cache references to functions for faster execution
+        // cache references to functions for faster execution
         context.turn_function = context.state["turn_function"];
         context.node_function = context.state["node_function"];
         context.way_function = context.state["way_function"];
@@ -623,7 +620,7 @@ void Sol2ScriptingEnvironment::ProcessElements(
         {
         case osmium::item_type::node:
             result_node.clear();
-            if (local_context.has_node_function )
+            if (local_context.has_node_function)
             {
                 local_context.ProcessNode(static_cast<const osmium::Node &>(*entity), result_node);
             }
@@ -808,15 +805,16 @@ void LuaScriptingContext::ProcessNode(const osmium::Node &node, ExtractionNode &
     {
     case 2:
     {
-        bool  process = false;
+        bool process = false;
 
-        if (node_tags_requiring_processing.empty() )
+        if (node_tags_requiring_processing.empty())
             process = true;
         else
         {
-            for (auto&& tag : node_tags_requiring_processing ) {
+            for (auto &&tag : node_tags_requiring_processing)
+            {
                 auto v = node.get_value_by_key(tag.c_str());
-                if( v && *v )
+                if (v && *v)
                 {
                     process = true;
                     break;
