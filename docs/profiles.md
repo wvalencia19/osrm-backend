@@ -47,12 +47,16 @@ Profiles can also define a `process_segment` function to handle diffences in spe
 
 At the end of the file, a table if returned with references to the setup and processsing functions the profile has defined.
 
-## Understanding speed, weight, rate and distance
-When computing a route from A to B there can be different measure of what is the best route. Because speeds very on differnt types of roads, the shortest and the fastest route are typically different. But there are many other possible preferences. For example a user might prefer a bicycle route that follow parks or other green areas, even though both duration and distance are a bit longer.
+## Understanding speed, weight and rate 
+When computing a route from A to B there can be different measure of what is the best route. That's why there's a need for different profiles.
+
+Because speeds very on differnt types of roads, the shortest and the fastest route are typically different. But there are many other possible preferences. For example a user might prefer a bicycle route that follow parks or other green areas, even though both duration and distance are a bit longer.
 
 To handle this, OSRM doesn't simply choose the ways with the highest speed. Intead it uses the concept of `weight` and `rate`. The rate is an abstract meassure that you can assign to  ways as you like to make some ways preferable to others. Routing will prefer ways with high rate.
 
-The weight of a way is computed as distance / rate. The weight can be though of as the resistance or cost when passing a way. Routing will prefer ways with low weight.
+The weight of a way normally computed as length / rate. The weight can be though of as the resistance or cost when passing the way. Routing will prefer ways with low weight.
+
+You can also set the weight og a way to a fixed value, In this case it's not calculated based on the length or rate, and the rate is ignored.
 
 You should set the speed to you best estimante of the actual speed that will be used on a particual way. This will result in the best estimated travel times.
 
@@ -213,12 +217,12 @@ Forks can be emitted between roads of similar priority category only. Obvious ch
 ### Using raster data
 OSRM has build-in support for loading an interpolating raster data in ASCII format. This can be used e.g. for factoring in elevation when computing routes.
 
-Use `sources:load()` in your `setup` function to load data and store the source in your configuration hash:
+Use `raster:load()` in your `setup` function to load data and store the source in your configuration hash:
 
 ```lua
 function setup()
   return {
-    raster_source = sources:load(
+    raster_source = raster:load(
       "rastersource.asc",  -- file to load
       0,    -- longitude min
       0.1,  -- longitude max
@@ -233,7 +237,15 @@ end
 
 The input data must an ASCII file with rows of integers. e.g.:
 
-In your `segment_function` you can then access the raster source and use sources:query() to query to find the nearest data point, or sources:interpolate() to interpolate a value based on nearby data points.
+```
+0  0  0   0
+0  0  0   250
+0  0  250 500
+0  0  0   250
+0  0  0   0
+```
+
+In your `segment_function` you can then access the raster source and use `raster:query()` to query to find the nearest data point, or `raster:interpolate()` to interpolate a value based on nearby data points.
 
 You must check whether the result is valid before use it.
 
@@ -241,8 +253,8 @@ Example:
 
 ```lua
 function process_segment (profile, segment)
-  local sourceData = sources:query(profile.raster_source, segment.source.lon, segment.source.lat)
-  local targetData = sources:query(profile.raster_source, segment.target.lon, segment.target.lat)
+  local sourceData = raster:query(profile.raster_source, segment.source.lon, segment.source.lat)
+  local targetData = raster:query(profile.raster_source, segment.target.lon, segment.target.lat)
   
   local invalid = sourceData.invalid_data()
   if sourceData.datum ~= invalid and targetData.datum ~= invalid then

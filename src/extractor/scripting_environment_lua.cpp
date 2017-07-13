@@ -216,13 +216,13 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
                            "sharp_left",
                            extractor::guidance::DirectionModifier::SharpLeft);
 
-    context.state.new_usertype<SourceContainer>("sources",
+    context.state.new_usertype<RasterContainer>("raster",
                                                 "load",
-                                                &SourceContainer::LoadRasterSource,
+                                                &RasterContainer::LoadRasterSource,
                                                 "query",
-                                                &SourceContainer::GetRasterDataFromSource,
+                                                &RasterContainer::GetRasterDataFromSource,
                                                 "interpolate",
-                                                &SourceContainer::GetRasterInterpolateFromSource);
+                                                &RasterContainer::GetRasterInterpolateFromSource);
 
     context.state.new_usertype<ProfileProperties>(
         "ProfileProperties",
@@ -424,8 +424,6 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
     // we will then clear it for v2 profiles after reading the file
     context.state["properties"] = &context.properties;
 
-    context.state["sources"] = &context.sources;
-
     //
     // end of register block
     //
@@ -466,6 +464,16 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
         if (function_table == sol::nullopt)
             throw util::exception("Profile must return a function table.");
 
+        // setup helpers
+        context.state["raster"] = &context.raster_sources;
+
+        // set constants
+        context.state.new_enum("constants",
+                               "precision",
+                               COORDINATE_PRECISION,
+                               "max_turn_weight",
+                               std::numeric_limits<TurnPenalty>::max());
+
         // call initialize function
         sol::function setup_function = function_table.value()["setup"];
         if (!setup_function.valid())
@@ -486,13 +494,6 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
         context.has_node_function = context.node_function.valid();
         context.has_way_function = context.way_function.valid();
         context.has_segment_function = context.segment_function.valid();
-
-        // set constants
-        context.state.new_enum("constants",
-                               "precision",
-                               COORDINATE_PRECISION,
-                               "max_turn_weight",
-                               std::numeric_limits<TurnPenalty>::max());
 
         // read properties from 'profile.properties' table
         sol::table properties = context.profile_table["properties"];
@@ -552,6 +553,9 @@ void Sol2ScriptingEnvironment::InitContext(LuaScriptingContext &context)
         context.has_node_function = context.node_function.valid();
         context.has_way_function = context.way_function.valid();
         context.has_segment_function = context.segment_function.valid();
+
+        // setup helpers
+        context.state["sources"] = &context.raster_sources;
 
         // set constants
         context.state.new_enum("constants", "precision", COORDINATE_PRECISION);

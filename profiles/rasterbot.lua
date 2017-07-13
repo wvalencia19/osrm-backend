@@ -11,7 +11,7 @@ function setup()
       process_call_tagless_node = false,
     },
     
-    raster_source = sources:load(
+    raster_source = raster:load(
       raster_path,
       0,    -- lon_min
       0.1,  -- lon_max
@@ -40,8 +40,8 @@ function process_way (profile, way, result)
 end
 
 function process_segment (profile, segment)
-  local sourceData = sources:query(profile.raster_source, segment.source.lon, segment.source.lat)
-  local targetData = sources:query(profile.raster_source, segment.target.lon, segment.target.lat)
+  local sourceData = raster:query(profile.raster_source, segment.source.lon, segment.source.lat)
+  local targetData = raster:query(profile.raster_source, segment.target.lon, segment.target.lat)
   io.write("evaluating segment: " .. sourceData.datum .. " " .. targetData.datum .. "\n")
   local invalid = sourceData.invalid_data()
   local scaled_weight = segment.weight

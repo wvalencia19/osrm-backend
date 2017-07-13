@@ -23,7 +23,7 @@ struct LuaScriptingContext final
     void ProcessWay(const osmium::Way &, ExtractionWay &result);
 
     ProfileProperties properties;
-    SourceContainer sources;
+    RasterContainer raster_sources;
     sol::state state;
 
     bool has_turn_penalty_function;
