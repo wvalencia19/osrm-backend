@@ -46,9 +46,12 @@ bool WayRestrictionMap::IsViaWay(const NodeID from, const NodeID to) const
 
 std::size_t WayRestrictionMap::Size() const { return via_ways.size(); }
 
-std::size_t WayRestrictionMap::GetID(const NodeID from, const NodeID to) const
+std::vector<std::size_t> WayRestrictionMap::GetIDs(const NodeID from, const NodeID to) const
 {
-    return via_ways.find(std::make_pair(from, to))->second;
+    std::vector<std::size_t> result;
+    auto range = via_ways.equal_range(std::make_pair(from,to));
+    std::transform(range.first,range.second,std::back_inserter(result),[](auto pair){ return pair.second; });
+    return result;
 }
 
 TurnRestriction const &WayRestrictionMap::GetRestriction(const std::size_t id) const
@@ -56,14 +59,14 @@ TurnRestriction const &WayRestrictionMap::GetRestriction(const std::size_t id) c
     return restriction_data[id];
 }
 
-std::vector<std::pair<NodeID, NodeID>> WayRestrictionMap::ViaWays() const
+std::vector<WayRestrictionMap::ViaWay> WayRestrictionMap::ViaWays() const
 {
-    std::vector<std::pair<NodeID, NodeID>> result;
+    std::vector<ViaWay> result;
     result.reserve(via_ways.size());
     std::transform(via_ways.begin(),
                    via_ways.end(),
                    std::back_inserter(result),
-                   [](auto const pair) { return pair.first; });
+                   [](auto const pair) -> ViaWay{ return {pair.second, pair.first.first, pair.first.second}; });
     return result;
 }
 

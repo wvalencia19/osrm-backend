@@ -20,6 +20,12 @@ namespace extractor
 class WayRestrictionMap
 {
   public:
+    struct ViaWay
+    {
+        std::size_t id;
+        NodeID from;
+        NodeID to;
+    };
     WayRestrictionMap(const std::vector<TurnRestriction> &turn_restrictions);
 
     bool IsViaWay(const NodeID from, const NodeID to) const;
@@ -28,10 +34,10 @@ class WayRestrictionMap
     bool IsStart(const NodeID from, const NodeID to) const;
     bool IsEnd(const NodeID from, const NodeID to) const;
 
-    std::vector<std::pair<NodeID, NodeID>> ViaWays() const;
+    std::vector<ViaWay> ViaWays() const;
 
     std::size_t Size() const;
-    std::size_t GetID(const NodeID from, const NodeID to) const;
+    std::vector<std::size_t> GetIDs(const NodeID from, const NodeID to) const;
 
     TurnRestriction const &GetRestriction(std::size_t) const;
 

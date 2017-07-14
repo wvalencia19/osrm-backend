@@ -599,11 +599,11 @@ Feature: Car - Turn restrictions
             | restriction | bc       | be      | ef     | no_left_turn  |
 
         When I route I should get
-            | from | to | route       |
-            | a    | d  | ab,be,de,de |
-            | a    | f  | ab,be,ef,ef |
-            | c    | d  | bc,be,de,de |
-            | c    | f  | bc,be,ef,ef |
+            | from | to | route             |
+            | a    | d  | ab,be,ef,ef,de,de |
+            | a    | f  | ab,be,ef,ef       |
+            | c    | d  | bc,be,de,de       |
+            | c    | f  | bc,be,de,de,ef,ef |
 
     @restriction-way @overlap
     Scenario: Two times same way
@@ -684,8 +684,8 @@ Feature: Car - Turn restrictions
 
         When I route I should get
             | from | to | route                  |
-            | a    | j  | left,third,right,right |
-            | f    | e  | right,first,left,left  |
+            | a    | j  | left,first,right,right |
+            | f    | e  | right,third,left,left  |
 
     @restriction
     Scenario: Car - allow only turn
