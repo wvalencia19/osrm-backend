@@ -64,10 +64,7 @@ struct Bits
     // when adding more bits, consider using bitfields just as in
     // bool unused : 7;
 
-    bool operator==(const Bits &other) const
-    {
-        return is_only == other.is_only;
-    }
+    bool operator==(const Bits &other) const { return is_only == other.is_only; }
 };
 
 } // namespace restriction

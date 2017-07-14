@@ -942,8 +942,9 @@ void EdgeBasedGraphFactory::GenerateEdgeExpandedEdges(
                 nodes_completed += buffer->nodes_processed;
                 progress.PrintStatus(nodes_completed);
                 append_data_to_output(buffer->continuous_data);
-                delayed_data.insert(delayed_data.end(),buffer->delayed_data.begin(),buffer->delayed_data.end());
-         });
+                delayed_data.insert(
+                    delayed_data.end(), buffer->delayed_data.begin(), buffer->delayed_data.end());
+            });
 
         // Now, execute the pipeline.  The value of "5" here was chosen by experimentation
         // on a 16-CPU machine and seemed to give the best performance.  This value needs
@@ -953,16 +954,17 @@ void EdgeBasedGraphFactory::GenerateEdgeExpandedEdges(
         tbb::parallel_pipeline(tbb::task_scheduler_init::default_num_threads() * 5,
                                generator_stage & processor_stage & output_stage);
 
-        std::sort(delayed_data.begin(),delayed_data.end(),[](auto const& lhs, auto const& rhs){return lhs.edge.source < rhs.edge.source;});
-        auto const transfer_data = [&](auto const& edge_with_data)
-        {
+        std::sort(delayed_data.begin(), delayed_data.end(), [](auto const &lhs, auto const &rhs) {
+            return lhs.edge.source < rhs.edge.source;
+        });
+        auto const transfer_data = [&](auto const &edge_with_data) {
             m_edge_based_edge_list.push_back(edge_with_data.edge);
             turn_weight_penalties.push_back(edge_with_data.turn_weight_penalty);
             turn_duration_penalties.push_back(edge_with_data.turn_duration_penalty);
             turn_data_container.push_back(edge_with_data.turn_data);
             turn_indexes_write_buffer.push_back(edge_with_data.turn_index);
         };
-        std::for_each(delayed_data.begin(),delayed_data.end(),transfer_data);
+        std::for_each(delayed_data.begin(), delayed_data.end(), transfer_data);
 
         // Flush the turn_indexes_write_buffer if it's not empty
         if (!turn_indexes_write_buffer.empty())

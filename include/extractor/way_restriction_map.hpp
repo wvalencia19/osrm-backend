@@ -26,7 +26,7 @@ class WayRestrictionMap
         NodeID from;
         NodeID to;
     };
-    WayRestrictionMap(const std::vector<TurnRestriction> & turn_restrictions);
+    WayRestrictionMap(const std::vector<TurnRestriction> &turn_restrictions);
 
     bool IsViaWay(const NodeID from, const NodeID to) const;
 

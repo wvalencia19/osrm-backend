@@ -497,7 +497,8 @@ Extractor::BuildEdgeExpandedGraph(ScriptingEnvironment &scripting_environment,
                                      config.cnbg_ebg_graph_mapping_output_path,
                                      via_node_restriction_map,
                                      via_way_restriction_map);
-        return edge_based_graph_factory.GetHighestEdgeID() + via_way_restriction_map.NumberOfDuplicatedNodes();
+        return edge_based_graph_factory.GetHighestEdgeID() +
+               via_way_restriction_map.NumberOfDuplicatedNodes();
     }();
 
     compressed_edge_container.PrintStatistics();

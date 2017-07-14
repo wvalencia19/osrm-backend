@@ -11,12 +11,11 @@ namespace extractor
 WayRestrictionMap::WayRestrictionMap(const std::vector<TurnRestriction> &turn_restrictions)
 {
     // get all way restrictions
-    const auto get_way_restrictions = [this](const auto & turn_restriction)
-    {
-        if( turn_restriction.Type() == RestrictionType::WAY_RESTRICTION )
+    const auto get_way_restrictions = [this](const auto &turn_restriction) {
+        if (turn_restriction.Type() == RestrictionType::WAY_RESTRICTION)
             restriction_data.push_back(turn_restriction);
     };
-    std::for_each(turn_restrictions.begin(),turn_restrictions.end(),get_way_restrictions);
+    std::for_each(turn_restrictions.begin(), turn_restrictions.end(), get_way_restrictions);
 
     const auto as_duplicated_node = [](auto const &restriction) {
         auto &way = restriction.AsWayRestriction();
@@ -48,7 +47,7 @@ WayRestrictionMap::WayRestrictionMap(const std::vector<TurnRestriction> &turn_re
 
     std::size_t offset = 1;
     // the first group starts at 0
-    if( !restriction_data.empty() )
+    if (!restriction_data.empty())
         duplicated_node_groups.push_back(0);
 
     auto const add_offset_on_new_groups = [&](auto const &lhs, auto const &rhs) {
@@ -77,7 +76,8 @@ std::size_t WayRestrictionMap::DuplicatedNodeID(const std::size_t restriction_id
     return std::distance(duplicated_node_groups.begin(),
                          std::upper_bound(duplicated_node_groups.begin(),
                                           duplicated_node_groups.end(),
-                                          restriction_id))-1;
+                                          restriction_id)) -
+           1;
 }
 
 // check if an edge between two nodes is a restricted turn
@@ -103,8 +103,8 @@ std::vector<std::size_t> WayRestrictionMap::GetIDs(const NodeID from, const Node
     std::transform(range.first, range.second, std::back_inserter(result), [](auto pair) {
         return pair.second;
     });
-    //group by their respective duplicated nodes
-    std::sort(result.begin(),result.end());
+    // group by their respective duplicated nodes
+    std::sort(result.begin(), result.end());
     return result;
 }
 
@@ -118,7 +118,7 @@ std::vector<WayRestrictionMap::ViaWay> WayRestrictionMap::DuplicatedNodeRepresen
     std::vector<ViaWay> result;
     result.reserve(NumberOfDuplicatedNodes());
     std::transform(duplicated_node_groups.begin(),
-                   duplicated_node_groups.end()-1,
+                   duplicated_node_groups.end() - 1,
                    std::back_inserter(result),
                    [&](auto const representative_id) -> ViaWay {
                        auto &way = restriction_data[representative_id].AsWayRestriction();
