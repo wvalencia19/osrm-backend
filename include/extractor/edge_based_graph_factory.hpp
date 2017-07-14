@@ -173,9 +173,6 @@ class EdgeBasedGraphFactory
     util::ConcurrentIDMap<util::guidance::BearingClass, BearingClassID> bearing_class_hash;
     std::vector<BearingClassID> bearing_class_by_node_based_node;
     util::ConcurrentIDMap<util::guidance::EntryClass, EntryClassID> entry_class_hash;
-
-    // a mapping from a restriction way to the duplicate node
-    std::vector<NodeID> edge_based_node_by_via_way;
 };
 } // namespace extractor
 } // namespace osrm

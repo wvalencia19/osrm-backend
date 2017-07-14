@@ -26,7 +26,7 @@ class WayRestrictionMap
         NodeID from;
         NodeID to;
     };
-    WayRestrictionMap(const std::vector<TurnRestriction> &turn_restrictions);
+    WayRestrictionMap(const std::vector<TurnRestriction> & turn_restrictions);
 
     bool IsViaWay(const NodeID from, const NodeID to) const;
 
@@ -34,18 +34,32 @@ class WayRestrictionMap
     bool IsStart(const NodeID from, const NodeID to) const;
     bool IsEnd(const NodeID from, const NodeID to) const;
 
-    std::vector<ViaWay> ViaWays() const;
-
     std::size_t Size() const;
+
+    // number of duplicated nodes
+    std::size_t NumberOfDuplicatedNodes() const;
+
+    // find the ID of the duplicated node (zero based) for a given restriction id
+    std::size_t DuplicatedNodeID(const std::size_t restriction_id) const;
+
+    // returns a representative for the duplicated way, consisting of the representative ID (first
+    // ID of the nodes restrictions) and the from/to vertices of the via-way
+    std::vector<ViaWay> DuplicatedNodeRepresentatives() const;
+
     std::vector<std::size_t> GetIDs(const NodeID from, const NodeID to) const;
 
     TurnRestriction const &GetRestriction(std::size_t) const;
 
   private:
-    // acces to the turn restrictions based on the via way they use
+    // access all restrictions that have the same starting way and via way. Any duplicated node
+    // represents the same in-way + via-way combination. This vector contains data about all
+    // restrictions and their assigned duplicated nodes. It indicates the minimum restriciton ID
+    // that is represented by the next node. The ID of a node is defined as the position of the
+    // lower bound of the restrictions ID within this array
+    std::vector<std::size_t> duplicated_node_groups;
+
     boost::unordered_multimap<std::pair<NodeID, NodeID>, std::size_t> restriction_starts;
     boost::unordered_multimap<std::pair<NodeID, NodeID>, std::size_t> restriction_ends;
-
     boost::unordered_multimap<std::pair<NodeID, NodeID>, std::size_t> via_ways;
 
     std::vector<TurnRestriction> restriction_data;

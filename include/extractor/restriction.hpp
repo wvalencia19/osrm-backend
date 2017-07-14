@@ -63,6 +63,11 @@ struct Bits
     bool is_only;
     // when adding more bits, consider using bitfields just as in
     // bool unused : 7;
+
+    bool operator==(const Bits &other) const
+    {
+        return is_only == other.is_only;
+    }
 };
 
 } // namespace restriction
@@ -141,6 +146,11 @@ struct NodeRestriction
         return "From " + std::to_string(from) + " via " + std::to_string(via) + " to " +
                std::to_string(to);
     }
+
+    bool operator==(const NodeRestriction &other) const
+    {
+        return std::tie(from, via, to) == std::tie(other.from, other.via, other.to);
+    }
 };
 
 // A way restriction in the context of OSRM requires translation into NodeIDs. This is due to the
@@ -165,6 +175,12 @@ struct WayRestriction
     // case a way restrction is not fully collapsed
     NodeRestriction in_restriction;
     NodeRestriction out_restriction;
+
+    bool operator==(const WayRestriction &other) const
+    {
+        return std::tie(in_restriction, out_restriction) ==
+               std::tie(other.in_restriction, other.out_restriction);
+    }
 };
 
 // Wrapper for turn restrictions that gives more information on its type / handles the switch
@@ -236,6 +252,24 @@ struct TurnRestriction
         {
             auto const &restriction = AsNodeRestriction();
             return restriction.Valid();
+        }
+    }
+
+    bool operator==(const TurnRestriction &other) const
+    {
+        if (!(flags == other.flags))
+            return false;
+
+        if (Type() != other.Type())
+            return false;
+
+        if (Type() == RestrictionType::WAY_RESTRICTION)
+        {
+            return AsWayRestriction() == other.AsWayRestriction();
+        }
+        else
+        {
+            return AsNodeRestriction() == other.AsNodeRestriction();
         }
     }
 
