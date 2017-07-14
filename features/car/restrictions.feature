@@ -620,9 +620,9 @@ Feature: Car - Turn restrictions
                 |   |
                 |   |
                 |   |
-            a - b - c - f
-                |   | \ |
-                i - d - e
+            a - b - c - - - - - - - - - - - - - - - - - - - f
+                |   | \                                     /
+                i - d - e - - - - - - - - - - - - - - - - -
             """
 
         And the ways
@@ -643,7 +643,7 @@ Feature: Car - Turn restrictions
 
        When I route I should get
             | from | to | route                |
-            | a    | i  | ab,bc,cd,fedib,fedib |
+            | a    | i  | ab,bc,cf,fedib,fedib |
 
 
     @restriction-way @overlap
